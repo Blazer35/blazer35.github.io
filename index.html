@@ -1,65 +1,1032 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Mii | Personal Website</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mihir Palasamudram — Edge AI Engineer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #050810;
+    --surface: #0b1020;
+    --accent: #00f5c4;
+    --accent2: #7b5cf5;
+    --accent3: #f5a623;
+    --text: #e8eaf0;
+    --muted: #5a6075;
+    --border: rgba(0,245,196,0.15);
+    --card: rgba(11,16,32,0.85);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── CANVAS ── */
+  #three-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 3rem;
+    backdrop-filter: blur(12px);
+    background: rgba(5,8,16,0.7);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    text-shadow: 0 0 20px rgba(0,245,196,0.5);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ── SECTIONS ── */
+  section {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 6rem 3rem;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; width: 100%; }
+
+  /* ── HERO ── */
+  #hero {
+    justify-content: center;
+    text-align: center;
+    padding-top: 10rem;
+    min-height: 100vh;
+  }
+
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+
+  .hero-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 10vw, 9rem);
+    line-height: 0.9;
+    letter-spacing: 0.04em;
+    background: linear-gradient(135deg, #fff 30%, var(--accent) 70%, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(0.75rem, 1.5vw, 1rem);
+    color: var(--muted);
+    margin-top: 1.5rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s forwards;
+  }
+
+  .hero-title span { color: var(--accent3); }
+
+  .hero-location {
+    margin-top: 0.75rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s forwards;
+  }
+
+  .hero-cta {
+    margin-top: 3rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.1s forwards;
+  }
+
+  .btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.9rem 2rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: inline-block;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+  }
+
+  .btn-primary:hover {
+    background: #fff;
+    box-shadow: 0 0 30px rgba(0,245,196,0.4);
+    transform: translateY(-2px);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+
+  .btn-ghost:hover {
+    background: rgba(0,245,196,0.08);
+    transform: translateY(-2px);
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    letter-spacing: 0.05em;
+    line-height: 1;
+    margin-bottom: 3rem;
+  }
+
+  /* ── EXPERIENCE ── */
+  #experience { background: linear-gradient(180deg, transparent, rgba(7,12,28,0.6) 50%, transparent); }
+
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, var(--accent), var(--accent2), transparent);
+  }
+
+  .exp-card {
+    position: relative;
+    margin-bottom: 2.5rem;
+    padding: 1.8rem 2rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s;
+    cursor: default;
+  }
+
+  .exp-card::before {
+    content: '';
+    position: absolute;
+    left: -2.5rem; top: 50%;
+    transform: translateY(-50%);
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+  }
+
+  .exp-card:hover {
+    border-color: var(--accent);
+    transform: translateX(6px);
+    box-shadow: 0 0 30px rgba(0,245,196,0.08);
+  }
+
+  .exp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  .exp-company {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.08em;
+    color: var(--text);
+  }
+
+  .exp-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent3);
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    padding-top: 0.3rem;
+  }
+
+  .exp-bullets {
+    list-style: none;
+    margin-top: 0.8rem;
+  }
+
+  .exp-bullets li {
+    font-size: 0.88rem;
+    color: #9aa0b8;
+    line-height: 1.7;
+    padding-left: 1.2rem;
+    position: relative;
+  }
+
+  .exp-bullets li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+
+  /* ── EDUCATION ── */
+  #education { background: linear-gradient(180deg, transparent, rgba(123,92,245,0.05) 50%, transparent); }
+
+  .edu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .edu-card {
+    padding: 2rem;
+    background: var(--card);
+    border: 1px solid rgba(123,92,245,0.2);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .edu-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+  }
+
+  .edu-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(123,92,245,0.5);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  }
+
+  .edu-degree {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.4rem;
+  }
+
+  .edu-school {
+    font-size: 0.82rem;
+    color: var(--accent2);
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+  }
+
+  .edu-meta {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  .gpa-badge {
+    display: inline-block;
+    margin-top: 0.8rem;
+    padding: 0.3rem 0.8rem;
+    background: rgba(123,92,245,0.15);
+    border: 1px solid rgba(123,92,245,0.3);
+    border-radius: 4px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--accent2);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── PROJECTS ── */
+  #projects { background: linear-gradient(180deg, transparent, rgba(245,166,35,0.04) 50%, transparent); }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .proj-card {
+    padding: 2rem;
+    background: var(--card);
+    border: 1px solid rgba(245,166,35,0.15);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .proj-card:hover {
+    transform: translateY(-6px) rotateX(2deg);
+    border-color: var(--accent3);
+    box-shadow: 0 20px 50px rgba(245,166,35,0.1);
+  }
+
+  .proj-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .proj-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.06em;
+    color: var(--text);
+    margin-bottom: 0.8rem;
+  }
+
+  .proj-bullets {
+    list-style: none;
+  }
+
+  .proj-bullets li {
+    font-size: 0.82rem;
+    color: #9aa0b8;
+    line-height: 1.7;
+    padding-left: 1.2rem;
+    position: relative;
+  }
+
+  .proj-bullets li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--accent3);
+  }
+
+  /* ── SKILLS ── */
+  #skills { }
+
+  .skills-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .skill-group {
+    padding: 2rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+  }
+
+  .skill-group-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.2rem;
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .skill-tag {
+    padding: 0.4rem 0.9rem;
+    background: rgba(0,245,196,0.07);
+    border: 1px solid rgba(0,245,196,0.2);
+    border-radius: 4px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text);
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    cursor: default;
+  }
+
+  .skill-tag:hover {
+    background: rgba(0,245,196,0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .skill-tag.purple {
+    background: rgba(123,92,245,0.07);
+    border-color: rgba(123,92,245,0.25);
+  }
+
+  .skill-tag.purple:hover {
+    background: rgba(123,92,245,0.2);
+    border-color: var(--accent2);
+    color: var(--accent2);
+  }
+
+  .skill-tag.gold {
+    background: rgba(245,166,35,0.07);
+    border-color: rgba(245,166,35,0.25);
+  }
+
+  .skill-tag.gold:hover {
+    background: rgba(245,166,35,0.15);
+    border-color: var(--accent3);
+    color: var(--accent3);
+  }
+
+  /* ── CONTACT ── */
+  #contact {
+    min-height: 60vh;
+    text-align: center;
+    flex-direction: column;
+    justify-content: center;
+    background: linear-gradient(180deg, transparent, rgba(0,245,196,0.03));
+  }
+
+  #contact .container { text-align: center; }
+
+  .contact-links {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-top: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .contact-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    text-decoration: none;
+    transition: all 0.2s;
+    padding: 1.2rem 1.8rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    min-width: 140px;
+  }
+
+  .contact-item:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 10px 30px rgba(0,245,196,0.1);
+  }
+
+  .contact-item .c-icon { font-size: 1.5rem; }
+  .contact-item .c-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .contact-item .c-val {
+    font-size: 0.82rem;
+    color: var(--text);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 2rem;
+    border-top: 1px solid var(--border);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(20px); }
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 5rem 1.5rem; }
+    .skills-layout { grid-template-columns: 1fr; }
+    .timeline { padding-left: 1.2rem; }
+    .exp-card::before { left: -1.7rem; }
+  }
+
+  /* ── GLITCH CURSOR ── */
+  .cursor-dot {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.08s;
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  /* 3D card perspective */
+  #projects { perspective: 1000px; }
+</style>
 </head>
 <body>
 
-  <header>
-    <h1>Mihir Palasamudram</h1>
-    <p>Master Student | Embedded Software Developer </p>
-  </header>
+<canvas id="three-canvas"></canvas>
+<div class="cursor-dot" id="cursor"></div>
 
-  <section>
-    <h2>About Me</h2>
-    <p>
-      I am a passionate and self motivated student. Interested in a career, where I can apply my knowledge and skills for continuous improvement.
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">MP</div>
+  <ul class="nav-links">
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container">
+    <p class="hero-tag">// Edge AI · Embedded Systems · TinyML</p>
+    <h1 class="hero-name">Mihir<br>Palasamu-<br>dram</h1>
+    <p class="hero-title">MSc Microelectronics · <span>Embedded Systems</span> · Hamburg</p>
+    <p class="hero-location">📍 Hamburg, Germany &nbsp;·&nbsp; NXP Semiconductors</p>
+    <div class="hero-cta">
+      <a href="mailto:mihir.ger2022@gmail.com" class="btn btn-primary">Get In Touch</a>
+      <a href="#projects" class="btn btn-ghost">View Projects</a>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="container">
+    <p class="section-label">// Work History</p>
+    <h2 class="section-title">Experience</h2>
+    <div class="timeline">
+
+      <div class="exp-card reveal">
+        <div class="exp-header">
+          <span class="exp-company">NXP Semiconductors</span>
+          <span class="exp-date">Jun 2024 — Present</span>
+        </div>
+        <ul class="exp-bullets">
+          <li>Working with Developers and Lead Architects on Java Card technology</li>
+          <li>Hardware communication interfaces: SPI, I2C and UART</li>
+          <li>Designed and worked with RESTful APIs using Java Servlets</li>
+        </ul>
+      </div>
+
+      <div class="exp-card reveal">
+        <div class="exp-header">
+          <span class="exp-company">Siemens Gamesa</span>
+          <span class="exp-date">Nov 2023 — Mar 2024</span>
+        </div>
+        <ul class="exp-bullets">
+          <li>Contributed to Automated Rotor House Fastening system development</li>
+          <li>System-level troubleshooting and industrial automation setup</li>
+          <li>Collaborated with multidisciplinary teams in industrial environment</li>
+        </ul>
+      </div>
+
+      <div class="exp-card reveal">
+        <div class="exp-header">
+          <span class="exp-company">DRDO — Research Intern</span>
+          <span class="exp-date">Sep 2022 — Nov 2022</span>
+        </div>
+        <ul class="exp-bullets">
+          <li>Contributed to digital active phased array radar systems</li>
+          <li>Studied pulse compression and radar signal processing techniques</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="container">
+    <p class="section-label">// Academic Background</p>
+    <h2 class="section-title">Education</h2>
+    <div class="edu-grid">
+
+      <div class="edu-card reveal">
+        <div class="edu-degree">MSc Microelectronics &amp; Microsystems</div>
+        <div class="edu-school">Technical University Hamburg (TUHH)</div>
+        <div class="edu-meta">2023 — Present &nbsp;·&nbsp; Spl. Embedded Systems</div>
+        <span class="gpa-badge">GPA 2.2</span>
+      </div>
+
+      <div class="edu-card reveal">
+        <div class="edu-degree">B.Tech Electronics &amp; Instrumentation</div>
+        <div class="edu-school">B.M.S College of Engineering</div>
+        <div class="edu-meta">2019 — 2023</div>
+        <span class="gpa-badge">GPA 1.4</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="container">
+    <p class="section-label">// Notable Work</p>
+    <h2 class="section-title">Projects</h2>
+    <div class="projects-grid">
+
+      <div class="proj-card reveal">
+        <span class="proj-icon">🧠</span>
+        <div class="proj-title">TinyML: On-Device ML Deployment</div>
+        <ul class="proj-bullets">
+          <li>Deployed ML model via TensorFlow Lite on Arduino Nano BLE</li>
+          <li>Applied quantization &amp; pruning for embedded optimization</li>
+          <li>Real-time IMU gesture detection with ultra-low latency</li>
+          <li>Benchmarked CNNs across baseline and quantized variants</li>
+          <li>End-to-end pipeline: data acquisition → training → deployment</li>
+        </ul>
+      </div>
+
+      <div class="proj-card reveal">
+        <span class="proj-icon">⚡</span>
+        <div class="proj-title">Low-Power FPGA Smart Sensors</div>
+        <ul class="proj-bullets">
+          <li>Developed SPI and UART modules using Verilog</li>
+          <li>RTL simulation and synthesis on iCE40-8KHX FPGA board</li>
+        </ul>
+      </div>
+
+      <div class="proj-card reveal">
+        <span class="proj-icon">🤖</span>
+        <div class="proj-title">Embedded &amp; Automation</div>
+        <ul class="proj-bullets">
+          <li>Animatronic hand — OpenCV based control system</li>
+          <li>Arduino parking sensor</li>
+          <li>LPG loadcell measurement system</li>
+          <li>UiPath automation workflows</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <p class="section-label">// Technical Arsenal</p>
+    <h2 class="section-title">Skills</h2>
+    <div class="skills-layout">
+
+      <div class="skill-group reveal">
+        <div class="skill-group-title">Programming</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">C</span>
+          <span class="skill-tag">C++</span>
+          <span class="skill-tag">Java</span>
+          <span class="skill-tag">Verilog</span>
+        </div>
+      </div>
+
+      <div class="skill-group reveal">
+        <div class="skill-group-title">Embedded AI</div>
+        <div class="skill-tags">
+          <span class="skill-tag purple">TensorFlow Lite</span>
+          <span class="skill-tag purple">Edge Impulse</span>
+          <span class="skill-tag purple">PyTorch</span>
+          <span class="skill-tag purple">Colab</span>
+          <span class="skill-tag purple">TinyML</span>
+          <span class="skill-tag purple">Quantization</span>
+        </div>
+      </div>
+
+      <div class="skill-group reveal">
+        <div class="skill-group-title">Protocols &amp; Hardware</div>
+        <div class="skill-tags">
+          <span class="skill-tag gold">SPI</span>
+          <span class="skill-tag gold">I2C</span>
+          <span class="skill-tag gold">UART</span>
+          <span class="skill-tag gold">FPGA</span>
+          <span class="skill-tag gold">Arduino</span>
+          <span class="skill-tag gold">Java Card</span>
+        </div>
+      </div>
+
+      <div class="skill-group reveal">
+        <div class="skill-group-title">Tools &amp; Languages</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Git</span>
+          <span class="skill-tag">Linux</span>
+          <span class="skill-tag">Gradle</span>
+          <span class="skill-tag">OpenCV</span>
+          <span class="skill-tag">RESTful API</span>
+          <span class="skill-tag gold">English</span>
+          <span class="skill-tag gold">German</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <p class="section-label">// Let's Connect</p>
+    <h2 class="section-title">Get In Touch</h2>
+    <p style="color: var(--muted); font-size: 0.9rem; max-width: 500px; margin: 0 auto; line-height: 1.8;">
+      Interested in Edge AI, embedded systems, or just want to say hello? I'm always open to new opportunities and collaborations.
     </p>
-  </section>
+    <div class="contact-links">
+      <a href="mailto:mihir.ger2022@gmail.com" class="contact-item">
+        <span class="c-icon">✉️</span>
+        <span class="c-label">Email</span>
+        <span class="c-val">mihir.ger2022@gmail.com</span>
+      </a>
+      <a href="https://linkedin.com" class="contact-item" target="_blank">
+        <span class="c-icon">💼</span>
+        <span class="c-label">LinkedIn</span>
+        <span class="c-val">linkedin.com/in/mihir</span>
+      </a>
+      <a href="https://github.com" class="contact-item" target="_blank">
+        <span class="c-icon">🐙</span>
+        <span class="c-label">GitHub</span>
+        <span class="c-val">github.com/mihir</span>
+      </a>
+      <div class="contact-item">
+        <span class="c-icon">📞</span>
+        <span class="c-label">Phone</span>
+        <span class="c-val">+49 17655693552</span>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <section>
-    <h2>Education</h2>
-    <p>
-      <strong>MSc Microelectronics and Microsystems</strong> – Technical University Hamburg (TUHH) | 2023 Specialization in Embedded System , Grade:2.2 GPA * 
-      <br>
-    </p>
-  </section>
+<footer>
+  <p>© 2025 Mihir Palasamudram · Hamburg, Germany · Built with Three.js</p>
+</footer>
 
-  <section>
-    <h2>Skills</h2>
-    <ul>
-      <li>C/C++ Programming </li>
-      <li> TinyML </li>
-      <li> PyTorch </li>
-      <li> Verilog  </li>
-      <li> VHDL </li>
-      <li> Python </li>
-      <li> JAVA </li>
-      <li> RPA Developer (Ui-Path)   </li>
-      <li> MATlab, SCILab </li>
-      <li> Cadence |OrCad |Proteous </li>
-      <li> Programming Boards- Arduino, NODEmcu, STM-32 </li>
-    </ul>
-  </section>
+<script>
+// ── CURSOR ──
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
 
-  <section>
-    <h2>Projects</h2>
-    <p>
-      <strong>Project Name</strong> – short description  
-      <br>
-      <a href="#">GitHub Repo</a>
-    </p>
-  </section>
+// ── THREE.JS BACKGROUND ──
+const canvas = document.getElementById('three-canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
 
-  <section>
-    <h2>Contact</h2>
-    <p>Email: your@email.com</p>
-    <p>GitHub: github.com/yourusername</p>
-    <p>LinkedIn: linkedin.com/in/yourname</p>
-  </section>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = 30;
 
+// Particle field
+const particleCount = 1800;
+const positions = new Float32Array(particleCount * 3);
+const colors = new Float32Array(particleCount * 3);
+
+const colPalette = [
+  new THREE.Color(0x00f5c4),
+  new THREE.Color(0x7b5cf5),
+  new THREE.Color(0xf5a623),
+  new THREE.Color(0x3a4a7a),
+];
+
+for (let i = 0; i < particleCount; i++) {
+  positions[i * 3]     = (Math.random() - 0.5) * 120;
+  positions[i * 3 + 1] = (Math.random() - 0.5) * 120;
+  positions[i * 3 + 2] = (Math.random() - 0.5) * 80;
+
+  const col = colPalette[Math.floor(Math.random() * colPalette.length)];
+  colors[i * 3]     = col.r;
+  colors[i * 3 + 1] = col.g;
+  colors[i * 3 + 2] = col.b;
+}
+
+const geo = new THREE.BufferGeometry();
+geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+const mat = new THREE.PointsMaterial({
+  size: 0.18,
+  vertexColors: true,
+  transparent: true,
+  opacity: 0.7,
+  sizeAttenuation: true,
+});
+
+const particles = new THREE.Points(geo, mat);
+scene.add(particles);
+
+// Floating wireframe cubes
+const cubeGroup = new THREE.Group();
+const cubeGeo = new THREE.BoxGeometry(3, 3, 3);
+const cubeMat = new THREE.MeshBasicMaterial({
+  color: 0x00f5c4,
+  wireframe: true,
+  transparent: true,
+  opacity: 0.08
+});
+
+for (let i = 0; i < 8; i++) {
+  const cube = new THREE.Mesh(cubeGeo, cubeMat.clone());
+  cube.position.set(
+    (Math.random() - 0.5) * 60,
+    (Math.random() - 0.5) * 60,
+    (Math.random() - 0.5) * 30
+  );
+  cube.rotation.set(
+    Math.random() * Math.PI,
+    Math.random() * Math.PI,
+    Math.random() * Math.PI
+  );
+  const scale = 0.5 + Math.random() * 3;
+  cube.scale.setScalar(scale);
+  cube.userData = {
+    rotSpeed: (Math.random() - 0.5) * 0.005,
+    floatSpeed: Math.random() * 0.003 + 0.001,
+    floatOffset: Math.random() * Math.PI * 2,
+    baseY: cube.position.y
+  };
+  cubeGroup.add(cube);
+}
+scene.add(cubeGroup);
+
+// Floating icosahedra
+const icoGeo = new THREE.IcosahedronGeometry(2, 0);
+const icoMat = new THREE.MeshBasicMaterial({
+  color: 0x7b5cf5,
+  wireframe: true,
+  transparent: true,
+  opacity: 0.06
+});
+
+for (let i = 0; i < 5; i++) {
+  const ico = new THREE.Mesh(icoGeo, icoMat.clone());
+  ico.position.set(
+    (Math.random() - 0.5) * 70,
+    (Math.random() - 0.5) * 50,
+    (Math.random() - 0.5) * 20
+  );
+  const s = 0.5 + Math.random() * 4;
+  ico.scale.setScalar(s);
+  ico.userData = {
+    rotSpeed: (Math.random() - 0.5) * 0.004,
+    floatSpeed: Math.random() * 0.002 + 0.0005,
+    floatOffset: Math.random() * Math.PI * 2,
+    baseY: ico.position.y
+  };
+  cubeGroup.add(ico);
+}
+
+// Mouse parallax
+let mouseX = 0, mouseY = 0;
+document.addEventListener('mousemove', e => {
+  mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+  mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+});
+
+// Animate
+let t = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  t += 0.01;
+
+  particles.rotation.y += 0.0003;
+  particles.rotation.x += 0.0001;
+
+  camera.position.x += (mouseX * 3 - camera.position.x) * 0.04;
+  camera.position.y += (-mouseY * 2 - camera.position.y) * 0.04;
+  camera.lookAt(scene.position);
+
+  cubeGroup.children.forEach(mesh => {
+    if (mesh.userData.rotSpeed !== undefined) {
+      mesh.rotation.x += mesh.userData.rotSpeed;
+      mesh.rotation.y += mesh.userData.rotSpeed * 1.4;
+      mesh.position.y = mesh.userData.baseY + Math.sin(t * mesh.userData.floatSpeed * 100 + mesh.userData.floatOffset) * 2;
+    }
+  });
+
+  renderer.render(scene, camera);
+}
+animate();
+
+// Resize
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// ── SCROLL REVEAL ──
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => {
+        entry.target.classList.add('visible');
+      }, 80 * (Array.from(reveals).indexOf(entry.target) % 3));
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+reveals.forEach(el => observer.observe(el));
+</script>
 </body>
 </html>
-

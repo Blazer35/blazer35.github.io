@@ -22,3 +22,110 @@ section {
 ul {
   padding-left: 20px;
 }
+
+.item {
+  margin-bottom: 20px;
+}
+
+.meta {
+  color: #666;
+  font-size: 0.9em;
+  margin-bottom: 8px;
+}
+
+ul {
+  margin-top: 8px;
+}
+
+.hero {
+  background-color: #f97316; /* solid orange */
+  color: white;
+  padding: 60px 20px;
+  text-align: center;
+  border-radius: 12px;
+  margin-bottom: 50px;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.hero p {
+  font-size: 1.1rem;
+  margin-top: 10px;
+  opacity: 0.95;
+}
+@media (max-width: 600px) {
+  .hero h1 {
+    font-size: 2.2rem;
+  }
+
+  .hero {
+    padding: 40px 15px;
+  }
+}
+
+h2 {
+  border-left: 5px solid #f97316;
+  padding-left: 10px;
+}
+
+a {
+  color: #f97316;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+.edu-card {
+  display: flex;
+  gap: 20px;
+  padding: 22px;
+  border-radius: 14px;
+  background: #fff7ed;
+  margin-bottom: 24px;
+  align-items: flex-start;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.edu-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.edu-figure {
+  min-width: 52px;
+  height: 52px;
+  background-color: #f97316;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+.edu-content h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.edu-school {
+  font-weight: 600;
+  margin: 4px 0 0;
+}
+
+.edu-meta {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 2px 0 8px;
+}
+
+.edu-desc {
+  margin: 0;
+  color: #444;
+  line-height: 1.5;
+}
