@@ -103,15 +103,8 @@ section {
 
 .hero-name {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(4rem, 10vw, 9rem);
-  line-height: 0.9;
-  letter-spacing: 0.04em;
-  background: linear-gradient(135deg, #fff 30%, var(--accent) 70%, var(--accent2));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.5s forwards;
+  font-size: clamp(2.5rem, 12vw, 7rem);
+  line-height: 1.05;
 }
 
 .hero-title {
